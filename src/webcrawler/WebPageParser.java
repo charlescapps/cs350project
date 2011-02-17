@@ -12,28 +12,33 @@ public class WebPageParser {
 	private UrlHttpRequest conn; 
 	private BufferedReader httpReader; 
 	private String line; 
+	private Pattern linkRegex;
 	
 	public WebPageParser() {
 		curURL = null; 
 		conn = null; 
 		httpReader = null;	
+		
+		//Regex to find Strings of form href="someURL" where there is at least one space before href 
+		//and any amount of space between href, =, and "someURL"
+		linkRegex = Pattern.compile("(?i:\\shref\\s*=\\s*[\"\']([^\'\"]+)[\"\'])");
 	}
 	
-	public void setURL(URL u) {
+	public void setURL(URL u) throws Exception{
 		curURL = u; 
-	}
-	
-	public TreeSet<URL> getLinks() throws Exception, java.io.IOException {
 		
 		if (curURL == null)
 			throw new Exception("Cannot find links for NULL URL!");
 		
 		conn = new UrlHttpRequest(curURL, "GET", null); 
 		
-		System.out.println("Response Code: " + conn.getResponseCode());
+		System.out.println("Response Code from " + curURL.toString() +  ": " + conn.getResponseCode());
 		
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
 			throw new Exception("Invalid Link or failed to connect: " + curURL.toString());
+	}
+	
+	public TreeSet<URL> getLinks() throws Exception, java.io.IOException {
 		
 		httpReader = conn.getInputReader();
 		
@@ -49,18 +54,16 @@ public class WebPageParser {
 	
 	private ArrayList<String> getLinks(String aLine) {
 		
-		//Regular expression for any number of HTML attributes (to deal with cases like <a class="myClass" href="www.google.com">: 
-		
-		//String attributes = "(?:\\w+\\s*=\\s*[\"\']\\w*[\"\']\\s+)*";
-		
-		String attributes = "(?:[^>]+\\s+)*";  //Allow any number of characters not equal to '>' followed by some whitespace 
-												//This is a super-general way of dealing with attributes before 'href'
-		
-		//String attributes = "";
 		//Regular expression to find the URL inside a link tag: <a href="(group)">
+		//I ran into issues where the program would hang when I tried to account for attributes before the "href" 
+		//So, for now I'm simply finding strings of the form <a href="someURL"
+		//Where there can be any amount of whitespace in-between <, a, href, =, and "someURL"
 		
-		Pattern regex = Pattern.compile("(?i:<\\s*a\\s+" + attributes + "href\\s*=\\s*[\"\']([^\'\"]+)[\"\'][^>]*>)");
-		Matcher m = regex.matcher(aLine);
+		//Pattern regex = Pattern.compile("(?i:<\\s*a\\s+href\\s*=\\s*[\"\']([^\'\">]*)[\"\'])");
+		
+		//Trying a simpler regex to improve performance...all we really care about is href="someURL"
+		
+		Matcher m = linkRegex.matcher(aLine);
 		
 		ArrayList<String> linksFound = new ArrayList<String>(); 
 		String urlStr;
@@ -70,7 +73,7 @@ public class WebPageParser {
 			
 			//If the URL doesn't start with '#'
 			if (urlStr.charAt(0)!='#') 
-				linksFound.add(m.group(1));	
+				linksFound.add(urlStr);	
 			
 		}
 			
@@ -94,14 +97,18 @@ public class WebPageParser {
 					goodLinks.add(new URL(tmpURL.getProtocol(), tmpURL.getHost(), ""));
 			}
 			catch (java.net.MalformedURLException e) {
-				System.out.println("Found invalid URL '"+ e.getMessage() + "' when parsing web page at: " + curURL.toString());
+				//System.out.println("Found invalid URL '"+ e.getMessage() + "' when parsing web page at: " + curURL.toString());
 			}
 		}
 			
-		System.out.println("Num found: " + goodLinks.size());
+		System.out.println("Num links found from " + curURL.toString() + ": " + goodLinks.size());
 		
 		
 		return goodLinks;
+	}
+	
+	public void disconnect() {
+		conn.disconnect();
 	}
 	
 	

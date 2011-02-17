@@ -1,16 +1,18 @@
 package datastructures; 
 
-public class GeneralQueue<T>
+public class GeneralQueue<T extends Comparable<T>>
 {
 		private QueueNode<T> frontOfQueue; 
 		private QueueNode<T> rearOfQueue; 
 		
+		private int size;
+		
 		public GeneralQueue() {
 			frontOfQueue = rearOfQueue = null; 
-			
+			size = 0; 
 		}
 		
-		void enQueue(T newData) {
+		public void enQueue(T newData) {
 			if (frontOfQueue == null ) { //If list is empty, set front and rear to new QueueNode
 				frontOfQueue = rearOfQueue = new QueueNode<T>(newData); 
 				
@@ -21,9 +23,11 @@ public class GeneralQueue<T>
 				rearOfQueue = rearOfQueue.getRear(); 
 			}
 			
+			size++;
+			
 		}
 		
-		T deQueue() throws Exception {
+		public T deQueue() throws Exception {
 			if (frontOfQueue==null) 
 				throw new Exception("Attempted to remove node from empty queue!");
 			
@@ -38,7 +42,30 @@ public class GeneralQueue<T>
 				frontOfQueue = rearOfQueue = null; //Queue only had 1 node
 			}
 			
+			size--;
+			
 			return frontData; 
 		}
 		
+		public boolean contains(T item) {
+			QueueNode<T> n = frontOfQueue; 
+			while (n!=null) {
+				if (n.getData().compareTo(item)==0)
+					return true; 
+				
+				n = n.getRear();
+			}
+			return false; 
+		}
+		
+		public boolean isEmpty() {
+			if (frontOfQueue == null || rearOfQueue == null)
+				return true; 
+			else
+				return false;
+		}
+		
+		public int getSize() {
+			return size;
+		}
 }

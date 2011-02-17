@@ -1,6 +1,6 @@
 package datastructures; 
 
-public class GeneralStack<T>
+public class GeneralStack<T extends Comparable<T>>
 {
 		private QueueNode<T> topOfStack;  
 		
@@ -40,4 +40,28 @@ public class GeneralStack<T>
 			return topData; 
 		}
 		
+		//Need to be able to remove arbitrary element for Kosaraju's Algorithm
+		void remove(T toRemove) throws Exception {
+			QueueNode<T> node = topOfStack; 
+			
+			while (node!=null && node.getData()!=toRemove) {
+				node = node.getRear();
+			}
+			
+			if (node==null)
+				return; 
+			else if (node==topOfStack)
+				this.pop();
+			else if (node.getRear()==null) {
+				node.getFront().setRear(null);
+				node.setFront(null);
+			}
+			else {
+				node.getFront().setRear(node.getRear());
+				node.getRear().setFront(node.getFront());
+				node.setFront(null);
+				node.setRear(null);
+			}
+			
+		}
 }

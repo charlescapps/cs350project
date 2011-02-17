@@ -135,6 +135,10 @@ public class UrlHttpRequest{
 		return urlQueryString.toString(); 
 		
 	}
+	
+	public void disconnect() {
+		myConnection.disconnect();
+	}
 
 
 }

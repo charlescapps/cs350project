@@ -1,6 +1,6 @@
 package datastructures; 
 
-public class QueueNode<T>
+public class QueueNode<T extends Comparable<T>>
 {
 	private T data; 
 	private QueueNode<T> inFront; 
