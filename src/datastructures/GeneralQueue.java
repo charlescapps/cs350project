@@ -22,9 +22,7 @@ public class GeneralQueue<T extends Comparable<T>>
 				rearOfQueue.getRear().setFront(rearOfQueue); 
 				rearOfQueue = rearOfQueue.getRear(); 
 			}
-			
 			size++;
-			
 		}
 		
 		public T deQueue() throws Exception {

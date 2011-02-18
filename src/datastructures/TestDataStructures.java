@@ -7,7 +7,6 @@ public class TestDataStructures {
 	 */
 	public static void main(String[] args) throws Exception {
 		
-		GeneralQueue<Integer> gq= new GeneralQueue<Integer>();
 		GeneralStack<Integer> gs= new GeneralStack<Integer>(); 
 		
 		/*for (int i = 0; i < 1001; i++) 

@@ -1,46 +1,33 @@
 package webcrawler;
 
 import java.net.URL; 
-import java.util.TreeSet;
-import java.util.Set;
-import java.util.List;
-import java.util.ArrayList; 
+import datastructures.GraphNode;
 
-public class UrlNode implements Comparable<UrlNode> {
-	
-	public static enum Color {UNVISITED, DISCOVERED, VISITED};
+public class UrlNode extends GraphNode implements Comparable<UrlNode> {
 
 	private static final URLHostComparator urlComp = new URLHostComparator();
 	
-	private int index; 
 	private URL theURL; 
-	private Color myColor;
-	private int discoverTime; 
-	
-	private List<UrlNode> adjList; 
 	
 	public UrlNode(URL url) {
+		super();
 		theURL = url;
-		myColor = Color.UNVISITED;
-		setDiscoverTime(-1); 
-		index = -1; 
-		adjList = new ArrayList<UrlNode>();
+		
 	}
 	
 	public UrlNode clone() {
-		UrlNode theClone = new UrlNode(theURL);
+		UrlNode theClone = new UrlNode(this.theURL);
 		theClone.index = this.index; 
-		theClone.discoverTime = this.discoverTime; 
 		
 		return theClone;
 	}
 	
-	public void addEdge(UrlNode node){
-		adjList.add(node);
-	}
-	
-	public List<UrlNode> getAdjList() {
-		return adjList;
+	public GraphNode toBasicGraphNode() {
+		GraphNode theClone = new GraphNode();
+		theClone.setIndex(this.index);
+		
+		return theClone;
+		
 	}
 	
 	public int compareTo(UrlNode node) {
@@ -59,32 +46,9 @@ public class UrlNode implements Comparable<UrlNode> {
 		return urlComp.equals(theURL, url);
 	}
 
-	public void setColor(Color color) {
-		this.myColor = color;
-	}
-
-	public Color getColor() {
-		return myColor;
-	}
 	
 	public URL getURL() {
 		return theURL;
-	}
-
-	public void setDiscoverTime(int discoverTime) {
-		this.discoverTime = discoverTime;
-	}
-
-	public int getDiscoverTime() {
-		return discoverTime;
-	}
-	
-	public int getIndex() {
-		return index;
-	}
-	
-	public void setIndex(int i) {
-		index = i; 
 	}
 	
 	public String toString() {

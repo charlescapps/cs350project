@@ -2,6 +2,8 @@ package webcrawler;
 
 import java.net.URL;
 import java.util.TreeSet;
+import java.io.*;
+import datastructures.*;
 
 public class TestConnection {
 
@@ -13,7 +15,7 @@ public class TestConnection {
 		
 		private static void testGettingUrls() throws Exception {
 			UrlGraph graph = new UrlGraph();
-			graph.getUrls(new URL("http://www.pdx.edu"), 20);
+			graph.getUrls(new URL("http://www.nytimes.com"), 20);
 			System.out.println(graph.getListOfUrls());
 			graph.generateAdjacencyMatrixFromLinks(); 
 			graph.printAdjacencyMatrix();
@@ -22,6 +24,10 @@ public class TestConnection {
 			algorithm.getSCCs();
 			algorithm.printComponents(); 
 			
+			graph.write(new BufferedWriter(new FileWriter(new File("test.txt"))));
+			
+			Graph fromFileGraph = new Graph(new BufferedReader(new FileReader(new File("test.txt"))));
+			fromFileGraph.printAdjacencyMatrix();
 		}
 		
 		private static void testWebParser() throws Exception {

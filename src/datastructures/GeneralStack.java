@@ -6,10 +6,9 @@ public class GeneralStack<T extends Comparable<T>>
 		
 		public GeneralStack() {
 			topOfStack = null; 
-			
 		}
 		
-		void push(T newData) {
+		public void push(T newData) {
 			if (topOfStack == null ) { //If list is empty, set top to new node
 				topOfStack = new QueueNode<T>(newData); 
 				
@@ -22,7 +21,7 @@ public class GeneralStack<T extends Comparable<T>>
 			
 		}
 		
-		T pop() throws Exception {
+		public T pop() throws Exception {
 			if (topOfStack==null) 
 				throw new Exception("Attempted to remove node from empty stack!");
 			
@@ -40,28 +39,7 @@ public class GeneralStack<T extends Comparable<T>>
 			return topData; 
 		}
 		
-		//Need to be able to remove arbitrary element for Kosaraju's Algorithm
-		void remove(T toRemove) throws Exception {
-			QueueNode<T> node = topOfStack; 
-			
-			while (node!=null && node.getData()!=toRemove) {
-				node = node.getRear();
-			}
-			
-			if (node==null)
-				return; 
-			else if (node==topOfStack)
-				this.pop();
-			else if (node.getRear()==null) {
-				node.getFront().setRear(null);
-				node.setFront(null);
-			}
-			else {
-				node.getFront().setRear(node.getRear());
-				node.getRear().setFront(node.getFront());
-				node.setFront(null);
-				node.setRear(null);
-			}
-			
+		public boolean isEmpty() {
+			return (topOfStack==null ? true : false);
 		}
 }

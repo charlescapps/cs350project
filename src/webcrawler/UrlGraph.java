@@ -7,55 +7,16 @@ import java.util.ArrayList;
 import java.net.URL;
 import datastructures.*;
 
-public class UrlGraph {
+public class UrlGraph extends Graph{
 	
-	List<UrlNode> allNodes; //Use TreeSet so URL's with same host are considered the same (throw out URI)
 	List<Set<URL>> allLinks; 
 	
 	WebPageParser wpp; //Makes HTTP connections to URLs and uses REGEX's to search the contents for links 
 	
 	public UrlGraph(){
-		allNodes = new ArrayList<UrlNode>();
+		super();
 		allLinks = new ArrayList<Set<URL>>();
 		wpp = new WebPageParser();
-	}
-
-	public List<UrlNode> getAllNodes() {
-		return allNodes; 
-	}
-	
-	public UrlGraph clone() {
-		UrlGraph theClone = new UrlGraph(); 
-		
-		//Theta (|V|) to add all nodes to new graph
-		for (UrlNode node:allNodes) {
-			theClone.allNodes.add(node.clone());
-		}
-		
-		for (UrlNode node:allNodes) {
-			for (UrlNode adjacentNode: node.getAdjList() ) {
-				theClone.allNodes.get(node.getIndex()).addEdge(theClone.allNodes.get(adjacentNode.getIndex()));
-			}
-		}
-		
-		return theClone;
-	}
-	
-	public UrlGraph getTranspose() {
-		UrlGraph theClone = new UrlGraph(); 
-		
-		//Theta (|V|) to add all nodes to new graph
-		for (UrlNode node:allNodes) {
-			theClone.allNodes.add(node.clone());
-		}
-		
-		for (UrlNode node:allNodes) {
-			for (UrlNode adjacentNode: node.getAdjList() ) {
-				theClone.allNodes.get(adjacentNode.getIndex()).addEdge(theClone.allNodes.get(node.getIndex()));
-			}
-		}
-		
-		return theClone;
 	}
 	
 	public void getUrls(URL url, int max_nodes) throws Exception {
@@ -115,7 +76,7 @@ public class UrlGraph {
 		
 		for (int i= 0; i < allNodes.size(); i++) {
 			
-			node = allNodes.get(i);
+			node = (UrlNode) allNodes.get(i);
 			
 			
 			for (URL url: allLinks.get(i)) {
@@ -135,7 +96,7 @@ public class UrlGraph {
 	
 	private int indexOfUrl(URL url) {
 		for (int i = 0; i < allNodes.size(); i++) {
-			if (url.getHost().equals(allNodes.get(i).getURL().getHost()))
+			if (url.getHost().equals( ((UrlNode)allNodes.get(i)).getURL().getHost()))
 				return i; 
 		}
 		
@@ -144,38 +105,11 @@ public class UrlGraph {
 	
 	public String getListOfUrls() {
 		StringBuilder urlList = new StringBuilder();
-		for (UrlNode node:allNodes) {
-			urlList.append(node.getURL().toString() + "\n");
+		for (GraphNode node:allNodes) {
+			urlList.append( ((UrlNode)node).getURL().toString() + "\n");
 		}
 		
 		return urlList.toString();
 	}
 	
-	public void printAdjacencyMatrix() {
-		int[][] adjMatrix = new int[allNodes.size()][allNodes.size()]; 
-		
-		for (int i = 0; i < allNodes.size(); i ++)
-			for (int j = 0; j < allNodes.size(); j++) 
-				adjMatrix[i][j] = 0; 
-		
-		
-		for (UrlNode node: allNodes) {
-			for (UrlNode adjNode: node.getAdjList()) {
-				adjMatrix[node.getIndex()][adjNode.getIndex()] = 1; 
-			}
-		}
-		
-		for (int i = 0; i < allNodes.size(); i ++) {
-			for (int j = 0; j < allNodes.size(); j++) 
-				System.out.print(adjMatrix[i][j]);
-			
-			System.out.println();
-		}
-		
-	}
-
-	public void printDiscoveryTimes() {
-		for (UrlNode node: allNodes)
-			System.out.println("DC Time of " + node.getURL() + ": " + node.getDiscoverTime());
-	}
 }
