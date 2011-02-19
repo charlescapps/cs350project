@@ -25,7 +25,7 @@ public class SCCAlgorithm {
 	
 	public ArrayList<TreeSet<GraphNode>> getSCCs() throws Exception{
 		performDFS();
-		printDiscoverOrder();
+		printFinishTimes();
 		
 		reversedGraph = theGraph.getTranspose(); //Clones the graph in O(E+V) time with direction of edges reversed
 		
@@ -105,12 +105,15 @@ private void visitAndAddToComponent(GraphNode node) {
 			for (GraphNode n: sCCs.get(i)) {
 				System.out.println("\t" + n);
 			}
+			/*for (GraphNode n: sCCs.get(i))
+				System.out.println("\tNode #" + n.getIndex());
+				*/
 		}
 		
 		
 	}
 
-	public void printDiscoverOrder() {
+	public void printFinishTimes() {
 		System.out.println("Order nodes were visited:");
 		for (int i = 0; i < nodeFinishedAt.length; i++)
 			System.out.println("\tNode # " + nodeFinishedAt[i] );

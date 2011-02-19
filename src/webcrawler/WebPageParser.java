@@ -103,7 +103,6 @@ public class WebPageParser {
 			
 		System.out.println("Num links found from " + curURL.toString() + ": " + goodLinks.size());
 		
-		
 		return goodLinks;
 	}
 	

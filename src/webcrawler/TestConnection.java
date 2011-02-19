@@ -15,7 +15,7 @@ public class TestConnection {
 		
 		private static void testGettingUrls() throws Exception {
 			UrlGraph graph = new UrlGraph();
-			graph.getUrls(new URL("http://www.nytimes.com"), 20);
+			graph.getUrls(new URL("http://www.msdn.com"), 30);
 			System.out.println(graph.getListOfUrls());
 			graph.generateAdjacencyMatrixFromLinks(); 
 			graph.printAdjacencyMatrix();

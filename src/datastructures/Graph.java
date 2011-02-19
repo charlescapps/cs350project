@@ -50,8 +50,6 @@ public class Graph {
 			
 			index = Integer.parseInt(m.group(1));
 			
-			System.out.println("Num groups: " + m.groupCount());
-			
 			adjList = m.group(2).split(",");
 			
 			for (int i = 0; i<adjList.length; i++) {
