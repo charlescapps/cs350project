@@ -37,7 +37,7 @@ public class WebPageParser {
 		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
 			throw new Exception("Invalid Link or failed to connect: " + curURL.toString());
 	}
-	
+	/*
 	public TreeSet<URL> getLinks() throws Exception, java.io.IOException {
 		
 		httpReader = conn.getInputReader();
@@ -48,6 +48,25 @@ public class WebPageParser {
 		while ( (line = httpReader.readLine()) !=null) {
 			links.addAll(getLinks(line)); 
 		}
+		
+		return getGoodUrls(links); 
+	}*/
+	
+public TreeSet<URL> getLinks() throws Exception, java.io.IOException {
+		
+		httpReader = conn.getInputReader();
+		
+		ArrayList<String> links = new ArrayList<String>(); 	
+		
+		StringBuilder webpage = new StringBuilder();
+		
+		//Parse each line, and add all the links found
+		while ( (line = httpReader.readLine()) !=null) {
+			webpage.append(line);
+			 
+		}
+		
+		links.addAll(getLinks(webpage.toString()));
 		
 		return getGoodUrls(links); 
 	}

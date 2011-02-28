@@ -49,7 +49,7 @@ public class GenerateTestGraphs {
 			
 			m = urlLine.matcher(line);
 			if (m.find()==false) {
-				System.err.println("Invalid line encountered when inputting list of URLs");
+				System.err.println("\n********Invalid line encountered when inputting list of URLs**********\n");
 			}
 			else {
 				urlString = m.group(1);
@@ -59,6 +59,8 @@ public class GenerateTestGraphs {
 			if (numNodes > 0 && !urlString.equals("")) {
 				graph = new UrlGraph();
 				theURL = new URL(urlString);
+				
+				System.out.println("\n************CRAWLING WEB STARTING AT HOST " + urlString + "*****************\n");
 				graph.getUrls(theURL, numNodes); 
 				graph.generateAdjacencyMatrixFromLinks();
 				
@@ -67,8 +69,9 @@ public class GenerateTestGraphs {
 				try {
 					newFile = new File(newFileName);
 					newFile.createNewFile();
+					System.out.println("\n**************WRITING GRAPH TO FILE: " + theURL.getHost() + ".dat******************\n");
 					graph.write(new BufferedWriter(new FileWriter(new File(newFileName))));
-					System.out.println("\nFile written: " + newFileName + "\n");
+					System.out.println("\n**************FILE WRITTEN: " + newFileName + "********************\n");
 				}
 				catch (Exception e) {
 					System.err.println(e.getMessage());

@@ -25,7 +25,7 @@ public class SCCAlgorithm {
 	
 	public ArrayList<TreeSet<GraphNode>> getSCCs() throws Exception{
 		performDFS();
-		printFinishTimes();
+		//printFinishTimes();
 		
 		reversedGraph = theGraph.getTranspose(); //Clones the graph in O(E+V) time with direction of edges reversed
 		

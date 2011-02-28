@@ -46,6 +46,7 @@ public class UrlGraph extends Graph{
 			node = queue.deQueue();
 			
 			try {
+				System.out.println("\n************Nodes added so far: " + allNodes.size() + "************\n");
 				
 				//Set URL for WebPageParser and connect
 				wpp.setURL(node.getURL());
