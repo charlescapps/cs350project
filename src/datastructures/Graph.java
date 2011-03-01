@@ -150,4 +150,16 @@ public class Graph {
 		b.close();
 	}
 
+	public int getNumVertices() {
+		return allNodes.size();
+	}
+	
+	public int getNumEdges() {
+		int numEdges = 0;
+		for (GraphNode n: allNodes) {
+			numEdges+=n.getAdjList().size(); //Add the number of edges in each node's Adjacency list
+		}
+		
+		return numEdges;
+	}
 } 

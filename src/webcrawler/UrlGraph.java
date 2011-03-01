@@ -51,6 +51,8 @@ public class UrlGraph extends Graph{
 				//Set URL for WebPageParser and connect
 				wpp.setURL(node.getURL());
 				links = wpp.getLinks();
+				wpp.disconnect();
+				System.out.println("\n*************Disconnecting from URL...*************");
 				
 				//Add URL to allNodes if we successfully connected to it
 				allNodes.add(node);
