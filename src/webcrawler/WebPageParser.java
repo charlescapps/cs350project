@@ -13,6 +13,11 @@ public class WebPageParser {
 	private BufferedReader httpReader; 
 	private String line; 
 	private Pattern linkRegex;
+	private static URLHostComparator urlCompare = new URLHostComparator();
+	private static TreeSet<URL> badURLs = new TreeSet<URL>(urlCompare);
+	
+	//private static final int MAXLINES = 5000; 
+	private static final int MAXTIME = 20000;
 	
 	public WebPageParser() {
 		curURL = null; 
@@ -30,32 +35,52 @@ public class WebPageParser {
 		if (curURL == null)
 			throw new Exception("Cannot find links for NULL URL!");
 		
-		conn = new UrlHttpRequest(curURL, "GET", null); 
+		if (badURLs.contains(curURL))
+			throw new Exception("\n********************BAD URL--skipping!********************\n");
+		
+		try {
+			conn = new UrlHttpRequest(curURL, "GET", null); 
+		}
+		catch (Exception e) {
+			badURLs.add(curURL);
+			throw e;
+		}
 		
 		System.out.println("Response Code from " + curURL.toString() +  ": " + conn.getResponseCode());
 		
-		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
+		//Allow OK responses and redirections
+		if (conn.getResponseCode() != HttpURLConnection.HTTP_OK && 
+			conn.getResponseCode() != HttpURLConnection.HTTP_ACCEPTED &&
+			conn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM &&
+			conn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
+			badURLs.add(curURL);
 			throw new Exception("Invalid Link or failed to connect: " + curURL.toString());
+		}
 	}
 	
-	/*
 	public TreeSet<URL> getLinks() throws Exception, java.io.IOException {
 		
 		httpReader = conn.getInputReader();
 		
-		ArrayList<String> links = new ArrayList<String>(); 		
+		ArrayList<String> links = new ArrayList<String>(); 	
+		
+		System.out.println("\n***************Parsing web page line-by-line***************\n");
+		
+		long startTime = System.currentTimeMillis();
 		
 		//Parse each line, and add all the links found
-		while ( (line = httpReader.readLine()) !=null) {
+		while ( (line = httpReader.readLine()) !=null && ( System.currentTimeMillis() - startTime) < MAXTIME) {
 			if (line.indexOf(" href") < 0)
 				continue; 
 			else
 				links.addAll(getLinks(line)); 
 		}
 		
+		System.out.println("\n***************Finished parsing web page***************\n");
+		httpReader.close();
 		return getGoodUrls(links); 
-	}*/
-	
+	}
+	/*
 public TreeSet<URL> getLinks() throws Exception, java.io.IOException {
 		
 		httpReader = conn.getInputReader();
@@ -63,9 +88,9 @@ public TreeSet<URL> getLinks() throws Exception, java.io.IOException {
 		ArrayList<String> links = new ArrayList<String>(); 	
 		
 		StringBuilder webpage = new StringBuilder();
-		
+		int lineNo = 0; 
 		//Parse each line, and add all the links found
-		while ( (line = httpReader.readLine()) !=null) {
+		while ( (line = httpReader.readLine()) !=null && ++lineNo < MAXLINES) {
 			if (line.contains(" href")) 
 				webpage.append(line);
 			 
@@ -74,7 +99,7 @@ public TreeSet<URL> getLinks() throws Exception, java.io.IOException {
 		links.addAll(getLinks(webpage.toString()));
 		
 		return getGoodUrls(links); 
-	}
+	}*/
 	
 	private ArrayList<String> getLinks(String aLine) {
 		

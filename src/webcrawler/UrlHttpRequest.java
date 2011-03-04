@@ -20,7 +20,7 @@ public class UrlHttpRequest{
 
 	HttpURLConnection myConnection;
 	private final String enc = "UTF-8";
-	private static final int timeout = 200; //200 ms default timeouts
+	private static final int timeout = 500; //500 ms default timeouts
 
 	public UrlHttpRequest(String host, String port, String uriString, HashMap<String, String> parameters, String method) 
 				throws IOException, ProtocolException
@@ -37,8 +37,8 @@ public class UrlHttpRequest{
 		//System.out.println(urlString);
 		
 		myConnection = (HttpURLConnection) url.openConnection();
-		myConnection.setConnectTimeout(200);
-		myConnection.setReadTimeout(200);
+		myConnection.setConnectTimeout(timeout);
+		myConnection.setReadTimeout(timeout);
 		myConnection.setRequestMethod(method); 
 		
 		if (method=="POST")
@@ -57,9 +57,9 @@ public class UrlHttpRequest{
 	public UrlHttpRequest(URL url, String method, HashMap<String, String> parameters) 
 		throws IOException, ProtocolException {	
 			
-			//System.out.println(urlString);
-			
 			myConnection = (HttpURLConnection) url.openConnection();
+			myConnection.setConnectTimeout(timeout);
+			myConnection.setReadTimeout(timeout);
 			myConnection.setRequestMethod(method); 
 			
 			if (method=="POST")

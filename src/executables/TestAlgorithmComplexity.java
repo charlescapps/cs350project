@@ -13,6 +13,8 @@ public class TestAlgorithmComplexity {
 	private static File datafileDir; 
 	private static File outputFile; 
 	private static BufferedWriter outputFileWriter;
+	private static SCCAlgorithmInterface algo; 
+	private static boolean isBasic; 
 	
 	public static void main(String[] args) throws Exception {
 		if (args.length!=4 && args.length!=5) {
@@ -35,6 +37,11 @@ public class TestAlgorithmComplexity {
 			throw new Exception("Invalid option.");
 		}
 		
+		if (args.length == 5 )
+			isBasic = true; 
+		else
+			isBasic = false; 
+		
 		datafileDir = new File(args[1]);
 		if (!datafileDir.exists() || !datafileDir.isDirectory()) {
 			throw new Exception("Data file directory does not exist!"); 
@@ -55,17 +62,14 @@ public class TestAlgorithmComplexity {
 	
 	private static void testAllFiles() throws IOException {
 		
-		outputFileWriter.write("DATA FILE NAME, NUM EDGES, NUM VERTICES, TIME (ns)");
+		outputFileWriter.write("DATA_FILE_NAME, NUM_EDGES, NUM_VERTICES, TIME(ns)");
 		outputFileWriter.newLine();
 		
 		File[] allDataFiles = datafileDir.listFiles();
 		BufferedReader fileReader = null;
 		Graph currentGraph = null;
-		SCCAlgorithm algo = null; 
 		long startTime = 0; 
 		long elapsedTime = 0;
-		
-		ArrayList<TreeSet<GraphNode>> currentSCCs; 
 		
 		for (File f:allDataFiles) {
 			try {
@@ -77,12 +81,15 @@ public class TestAlgorithmComplexity {
 				System.err.println(e.getMessage());
 			}
 			
-			algo = new SCCAlgorithm(currentGraph); 
+			if (isBasic)
+				algo = new SCCAlgorithmBasic(currentGraph); 
+			else
+				algo = new SCCAlgorithm(currentGraph); 
 			
 			startTime = System.nanoTime(); //Record start time
 			
 			try { 
-				currentSCCs = algo.getSCCs();  //Execute algorithm
+				algo.executeAlgorithm();  //Execute algorithm, clearly
 			}
 			catch (Exception e) {
 				System.err.println("Something went horribly wrong when executing SCC algorithm:"); 
@@ -92,7 +99,7 @@ public class TestAlgorithmComplexity {
 			elapsedTime = System.nanoTime() - startTime; //Record elapsed time
 			
 			try {  //Write to file, skip and continue on to next graph if somehow this fails
-				outputFileWriter.write(f.getPath()+","+ currentGraph.getNumEdges() + "," + currentGraph.getNumVertices() + "," + elapsedTime);
+				outputFileWriter.write(f.getName()+","+ currentGraph.getNumEdges() + "," + currentGraph.getNumVertices() + "," + elapsedTime);
 				outputFileWriter.newLine();
 			}
 			catch (IOException e) {

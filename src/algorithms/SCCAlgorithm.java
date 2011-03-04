@@ -1,5 +1,6 @@
 package algorithms;
 
+import java.util.Comparator;
 import java.util.List; 
 import java.util.TreeSet; 
 import java.util.ArrayList; 
@@ -11,28 +12,32 @@ import datastructures.*;
  * 
  */
 
-public class SCCAlgorithm {
+public class SCCAlgorithm implements SCCAlgorithmInterface{
 	private Graph theGraph;
 	private Graph reversedGraph; 
 	private int[] nodeFinishedAt;  //Array of node indexes in graph indexed by finish time
 	private ArrayList<TreeSet<GraphNode>> sCCs;
+	private Comparator<? super GraphNode> nodeComparator;
+	private static GraphNodeComparator nodeCompare = new GraphNodeComparator(); 
 	
 	public SCCAlgorithm(Graph aGraph)  {
 		theGraph = aGraph; 
 		nodeFinishedAt = new int[theGraph.getAllNodes().size()];
-		sCCs = new ArrayList<TreeSet<GraphNode>>();
+		sCCs = new ArrayList<TreeSet<GraphNode>>(); 
 	}
 	
-	public ArrayList<TreeSet<GraphNode>> getSCCs() throws Exception{
+	 public void executeAlgorithm() throws Exception{
 		performDFS();
-		//printFinishTimes();
 		
 		reversedGraph = theGraph.getTranspose(); //Clones the graph in O(E+V) time with direction of edges reversed
 		
 		performReversedDFS();
-		
-		return sCCs; 
+ 
 	}
+	 
+	 public ArrayList<TreeSet<GraphNode>> getSCCs() {
+		 return sCCs;
+	 }
 	
 	//Performs a DFS and records discovery times in each node. Places each node in Array indexed by discovery time. 
 	private void performDFS() throws Exception{
@@ -63,7 +68,7 @@ public class SCCAlgorithm {
 				maxFinishTime--; 
 			
 			if (maxFinishTime >= 0) {
-				sCCs.add(new TreeSet<GraphNode>()); //Add TreeSet for new Strongly Connected Component
+				sCCs.add(new TreeSet<GraphNode>(nodeCompare)); //Add TreeSet for new Strongly Connected Component
 				visitAndAddToComponent(allNodes.get(nodeFinishedAt[maxFinishTime]));
 			}
 		}
@@ -84,7 +89,7 @@ public class SCCAlgorithm {
 		return time; 
 	}
 	
-private void visitAndAddToComponent(GraphNode node) {
+	private void visitAndAddToComponent(GraphNode node) {
 		
 		node.setColor(GraphNode.Color.DISCOVERED);
 		
@@ -105,12 +110,19 @@ private void visitAndAddToComponent(GraphNode node) {
 			for (GraphNode n: sCCs.get(i)) {
 				System.out.println("\t" + n);
 			}
-			/*for (GraphNode n: sCCs.get(i))
-				System.out.println("\tNode #" + n.getIndex());
-				*/
 		}
-		
-		
+	}
+	
+	public String componentsToString() {
+		String s = ""; 
+		for (int i = 0; i < sCCs.size(); i++) {
+			s += ("SCC # " + i + ":");
+			
+			for (GraphNode n: sCCs.get(i)) {
+				s += ("\t" + n);
+			}
+		}
+		return s; 
 	}
 
 	public void printFinishTimes() {

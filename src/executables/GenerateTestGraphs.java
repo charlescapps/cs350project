@@ -65,7 +65,7 @@ public class GenerateTestGraphs {
 				graph.getUrls(theURL, numNodes); 
 				graph.generateAdjacencyMatrixFromLinks();
 				
-				newFileName = subDir.toString() + "/" + theURL.getHost() + ".dat";
+				newFileName = subDir.toString() + "/" + numNodes + "_" + theURL.getHost() + ".dat";
 				
 				try {
 					newFile = new File(newFileName);

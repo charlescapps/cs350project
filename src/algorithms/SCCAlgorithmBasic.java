@@ -15,7 +15,7 @@ import datastructures.*;
  * 
  */
 
-public class SCCAlgorithmBasic {
+public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
 	private GraphNode[] theGraph;
 	private GraphNode[] reversedGraph; 
 	private int[] nodeFinishedAt;  //Array of node indexes in graph indexed by finish time
@@ -50,14 +50,17 @@ public class SCCAlgorithmBasic {
 		currentTime = 0; 
 	}
 	
-	public LinkedList<GraphNode>[] getSCCs() throws Exception{ //Function encapsulating the algorithm
+	public void executeAlgorithm() throws Exception{ //Function encapsulating the algorithm
+													//Stores representation of Strongly-connected components in SCCs variable
 		performDFS();
 		
 		getTranspose(); //Clones the graph in O(E+V) time with direction of edges reversed
 		
 		performReversedDFS();
-		
-		return sCCs; 
+	}
+	
+	public LinkedList<GraphNode>[] getSCCs() {
+		return sCCs;
 	}
 	
 	private void getTranspose() { //Simple function to get transpose without using any built-in Java types
@@ -120,7 +123,7 @@ public class SCCAlgorithmBasic {
 	
 	}
 	
-private void visitAndAddToComponent(GraphNode node) {
+	private void visitAndAddToComponent(GraphNode node) {
 		
 		node.setColor(GraphNode.Color.DISCOVERED);
 		
@@ -144,10 +147,23 @@ private void visitAndAddToComponent(GraphNode node) {
 				System.out.println("\t" + tmp.getData());
 				tmp = tmp.getNext();
 			}
-
+		}
+	}
+	
+	public String componentsToString() {
+		String s = "";
+		for (int i = 0; i < sCCs.length; i++) {
+			s += ("SCC # " + i + ":");
+			
+			LinkedListNode<GraphNode> tmp = sCCs[i].getHead(); 
+			
+			while (tmp!=null) {
+				s += ("\t" + tmp.getData());
+				tmp = tmp.getNext();
+			}
 		}
 		
-		
+		return s; 
 	}
 
 	public void printFinishTimes() {
