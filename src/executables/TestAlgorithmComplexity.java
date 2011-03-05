@@ -1,9 +1,6 @@
 package executables;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.TreeSet;
-
 import datastructures.*;
 import algorithms.*;
 
@@ -12,9 +9,13 @@ public class TestAlgorithmComplexity {
 	private static String usage = "Usage: java TestAlgorithmComplexity -d <dir_with_datafiles> -o <file_to_output> [-b] (for basic mode)";
 	private static File datafileDir; 
 	private static File outputFile; 
+	private static File verifyFile;
 	private static BufferedWriter outputFileWriter;
+	private static BufferedWriter verifyFileWriter;
 	private static SCCAlgorithmInterface algo; 
 	private static boolean isBasic; 
+	
+	private static final int numVerticesToVerify = 100; 
 	
 	public static void main(String[] args) throws Exception {
 		if (args.length!=4 && args.length!=5) {
@@ -52,15 +53,23 @@ public class TestAlgorithmComplexity {
 			throw new Exception("A file with the same name as output file already exists!"); 
 		}
 		
+		verifyFile = new File(args[3] + "_verified");
+		if (verifyFile.exists()) {
+			throw new Exception("A file with the same name as verification file already exists!"); 
+		}
+		
 		outputFile.createNewFile();
+		verifyFile.createNewFile();
 		outputFileWriter = new BufferedWriter(new FileWriter(outputFile));
+		verifyFileWriter = new BufferedWriter(new FileWriter(verifyFile));
 		
 		testAllFiles();
 		
 		outputFileWriter.close();
+		verifyFileWriter.close();
 	}
 	
-	private static void testAllFiles() throws IOException {
+	private static void testAllFiles() throws Exception {
 		
 		outputFileWriter.write("DATA_FILE_NAME, NUM_EDGES, NUM_VERTICES, TIME(ns)");
 		outputFileWriter.newLine();
@@ -88,19 +97,24 @@ public class TestAlgorithmComplexity {
 			
 			startTime = System.nanoTime(); //Record start time
 			
-			try { 
-				algo.executeAlgorithm();  //Execute algorithm, clearly
-			}
-			catch (Exception e) {
-				System.err.println("Something went horribly wrong when executing SCC algorithm:"); 
-				e.printStackTrace();
-			}
+			algo.executeAlgorithm();  //Execute algorithm, clearly
 			
 			elapsedTime = System.nanoTime() - startTime; //Record elapsed time
 			
 			try {  //Write to file, skip and continue on to next graph if somehow this fails
 				outputFileWriter.write(f.getName()+","+ currentGraph.getNumEdges() + "," + currentGraph.getNumVertices() + "," + elapsedTime);
 				outputFileWriter.newLine();
+				
+				verifyFileWriter.write("**********Verification Info for File '" + f.getName() + "'**********");
+				if (currentGraph.getNumVertices() < numVerticesToVerify) {
+					
+					verifyFileWriter.newLine(); 
+					currentGraph.printAdjacencyMatrix(verifyFileWriter);
+				}
+				
+					verifyFileWriter.newLine();
+					verifyFileWriter.write(algo.componentsToString());
+				
 			}
 			catch (IOException e) {
 				e.printStackTrace();

@@ -14,6 +14,16 @@ public class Graph {
 		allNodes = new ArrayList<GraphNode>();
 	}
 	
+	public Graph(int size) { //For when we know the size in advance
+	
+		allNodes = new ArrayList<GraphNode>();
+		
+		for (int i = 0; i < size; i++) {     //Initialize empty nodes with proper indices
+			allNodes.add(new GraphNode(i));  //New node with index = i recorded inside node
+		}
+	
+	}
+	
 	public Graph(BufferedReader br) throws Exception{	//Read a graph from file / string of proper format
 		allNodes = new ArrayList<GraphNode>();
 		
@@ -119,6 +129,30 @@ public class Graph {
 		}
 	}
 
+	public void printAdjacencyMatrix(BufferedWriter bw) throws IOException {
+		
+		int[][] adjMatrix = new int[allNodes.size()][allNodes.size()]; 
+		
+		for (int i = 0; i < allNodes.size(); i ++)
+			for (int j = 0; j < allNodes.size(); j++) 
+				adjMatrix[i][j] = 0; 
+		
+		
+		for (GraphNode node: allNodes) {
+			for (GraphNode adjNode: node.getAdjList()) {
+				adjMatrix[node.getIndex()][adjNode.getIndex()] = 1; 
+			}
+		}
+		
+		for (int i = 0; i < allNodes.size(); i ++) {
+			for (int j = 0; j < allNodes.size(); j++) 
+				bw.write(adjMatrix[i][j] == 1 ? "1 " : "0 ");
+			
+			bw.newLine();
+		}
+	}
+	
+	
 	public void printAllNodes() {
 		System.out.println("All nodes in graph:");
 		for (GraphNode n:allNodes) {

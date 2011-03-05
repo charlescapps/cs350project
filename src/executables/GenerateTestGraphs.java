@@ -38,6 +38,7 @@ public class GenerateTestGraphs {
 		String line;
 		Matcher m;
 		int numNodes; 
+		String nodesString; 
 		String urlString;
 		UrlGraph graph;
 		URL theURL;
@@ -65,7 +66,11 @@ public class GenerateTestGraphs {
 				graph.getUrls(theURL, numNodes); 
 				graph.generateAdjacencyMatrixFromLinks();
 				
-				newFileName = subDir.toString() + "/" + numNodes + "_" + theURL.getHost() + ".dat";
+				nodesString = Integer.toString(numNodes);
+				while (nodesString.length() < 4)
+					nodesString = "0".concat(nodesString);
+				
+				newFileName = subDir.toString() + "/" + nodesString + "_" + theURL.getHost() + ".dat";
 				
 				try {
 					newFile = new File(newFileName);
