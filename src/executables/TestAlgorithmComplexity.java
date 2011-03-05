@@ -105,6 +105,8 @@ public class TestAlgorithmComplexity {
 				outputFileWriter.write(f.getName()+","+ currentGraph.getNumEdges() + "," + currentGraph.getNumVertices() + "," + elapsedTime);
 				outputFileWriter.newLine();
 				
+				verifyFileWriter.write(isBasic ? "BASIC ALGORITHM" : "JAVA API ALGORITHM");
+				verifyFileWriter.newLine();
 				verifyFileWriter.write("**********Verification Info for File '" + f.getName() + "'**********");
 				if (currentGraph.getNumVertices() < numVerticesToVerify) {
 					

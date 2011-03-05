@@ -6,12 +6,13 @@ import java.util.TreeSet; //Not used as part of algorithm
 import datastructures.*;
 
 /**
- * Implementation of Kosaraju's algorithm
+ * *Basic* Implementation of Kosaraju's algorithm <BR> <BR> 
  * 
- * This is the BASIC version, which avoids using any Java API data structures,
- * other than for iterating through the Adjacency list of a node. Uses basic
- * arrays[] and my LinkedList<T> data type from my custom datastructures
- * package.
+ * This is the BASIC version, which avoids using any Java API data structures. 
+ * Uses basic arrays[] and my LinkedList<T> data type from my custom datastructures package.
+ * 
+ * GraphNode is swapped out for a BasicGraphNode, since my GraphNode class uses an ArrayList for
+ * the adjacency list.
  * 
  * @author Charles L Capps
  */
@@ -44,9 +45,7 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
 
         reversedGraph = new BasicGraphNode[theGraph.length]; //Init reversed graph
 
-        for (int i = 0; i < reversedGraph.length; i++) {
-            reversedGraph[i] = new BasicGraphNode(i);
-        }
+       
 
         nodeFinishedAt = new int[theGraph.length];
 
@@ -56,14 +55,6 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
         // don't know in advance how many SCC's there will be!
         sCCs = new LinkedList[theGraph.length];
 
-        // Initialize each Linked List of GraphNodes, technically an O(|V|)
-        // operation, but
-        // decided to not include in the algorithm proper since it doesn't
-        // change the
-        // asymptotic complexity.
-        for (int i = 0; i < sCCs.length; i++) {
-            sCCs[i] = new LinkedList<BasicGraphNode>();
-        }
         indexOfLastSCC = -1; // No SCC's added yet, so max index is -1
         currentTime = 0;
     }
@@ -95,6 +86,11 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
      */
     private void getTranspose() { // Function to get transpose without using any
                                   // Java API data structures
+        
+        for (int i = 0; i < reversedGraph.length; i++) { //Init reversedGraph in O(|V|) time with empty nodes
+            reversedGraph[i] = new BasicGraphNode(i);
+        }
+        
         for (int i = 0; i < theGraph.length; i++) {
             for (BasicGraphNode adjNode : theGraph[i].getAdjList()) {
                 reversedGraph[adjNode.getIndex()].addEdge(reversedGraph[i]); //Add edge in reverse direction
@@ -137,7 +133,7 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
 
             if (maxFinishTime >= 0) {
                 indexOfLastSCC++; // Increase the index we are looking at, i.e.
-                                  // start a new SCC
+                sCCs[indexOfLastSCC] = new LinkedList<BasicGraphNode>();// start a new SCC
                 visitAndAddToComponent(reversedGraph[nodeFinishedAt[maxFinishTime]]);
             }
         }
