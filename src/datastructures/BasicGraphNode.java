@@ -1,9 +1,6 @@
 package datastructures;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class GraphNode {
+public class BasicGraphNode {
 
     public static enum Color {
         UNVISITED, DISCOVERED, VISITED
@@ -12,24 +9,24 @@ public class GraphNode {
     protected int index;
     protected Color myColor;
 
-    protected List<GraphNode> adjList;
+    protected LinkedList<BasicGraphNode> adjList;
 
-    public GraphNode() {
+    public BasicGraphNode() {
         myColor = Color.UNVISITED;
 
         index = -1;
-        adjList = new ArrayList<GraphNode>();
+        adjList = new LinkedList<BasicGraphNode>();
     }
 
-    public GraphNode(int _index) {
+    public BasicGraphNode(int _index) {
         myColor = Color.UNVISITED;
 
         index = _index;
-        adjList = new ArrayList<GraphNode>();
+        adjList = new LinkedList<BasicGraphNode>();
     }
 
-    public GraphNode clone() {
-        GraphNode theClone = new GraphNode();
+    public BasicGraphNode clone() {
+        BasicGraphNode theClone = new BasicGraphNode();
         theClone.index = this.index;
 
         return theClone;
@@ -39,11 +36,11 @@ public class GraphNode {
         return this.index - node.index;
     }
 
-    public void addEdge(GraphNode node) {
-        adjList.add(node);
+    public void addEdge(BasicGraphNode node) {
+        adjList.addToFront(new LinkedListNode<BasicGraphNode>(node));
     }
 
-    public List<GraphNode> getAdjList() {
+    public LinkedList<BasicGraphNode> getAdjList() {
         return adjList;
     }
 

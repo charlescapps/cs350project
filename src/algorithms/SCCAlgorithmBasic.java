@@ -1,15 +1,9 @@
 package algorithms;
 
-import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.ArrayList; //Just used for sorting the SCC's for printing
+import java.util.TreeSet; //Not used as part of algorithm
 
-import datastructures.Graph;
-import datastructures.GraphNode;
-import datastructures.GraphNodeComparator;
-import datastructures.LinkedList;
-import datastructures.LinkedListNode;
-//This is only used for the sake of writing the SCC's to file, 
-//NOT as part of the algorithm! 
+import datastructures.*;
 
 /**
  * Implementation of Kosaraju's algorithm
@@ -23,14 +17,14 @@ import datastructures.LinkedListNode;
  */
 
 public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
-    private GraphNode[] theGraph; // Graph just represented as an array of
-                                  // GraphNode's
-    private GraphNode[] reversedGraph; // Structure that will contain the
-                                       // reversed graph
+    private BasicGraphNode[] theGraph; // Graph just represented as an array of
+    // GraphNode's
+    private BasicGraphNode[] reversedGraph; // Structure that will contain the
+    // reversed graph
     private int[] nodeFinishedAt; // nodeFinishedAt[i] contains the index of the
                                   // node that finished at time i
-    private LinkedList<GraphNode> sCCs[]; // Implement SCCs as an Array of
-                                          // Linked Lists
+    private LinkedList<BasicGraphNode> sCCs[]; // Implement SCCs as an Array of
+    // Linked Lists
 
     private int indexOfLastSCC; // Keep track of what SCC is currently being
                                 // added to
@@ -46,15 +40,14 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
      * @param - Graph to search for strongly connected components
      */
     public SCCAlgorithmBasic(Graph aGraph) {
-        theGraph = aGraph.getAllNodes().toArray(new GraphNode[0]); // Take in a
-                                                                   // graph, and
-                                                                   // put nodes
-                                                                   // into the
-                                                                   // basic
-                                                                   // array
-        reversedGraph = (new Graph(theGraph.length)).getAllNodes().toArray(
-                new GraphNode[0]); // Instantiate reverse graph
-                                   // as a graph with the same # of nodes
+        theGraph = aGraph.toBasicGraph();
+
+        reversedGraph = new BasicGraphNode[theGraph.length]; //Init reversed graph
+
+        for (int i = 0; i < reversedGraph.length; i++) {
+            reversedGraph[i] = new BasicGraphNode(i);
+        }
+
         nodeFinishedAt = new int[theGraph.length];
 
         // There are at most |V| Strongly Connected Components, so
@@ -69,7 +62,7 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
         // change the
         // asymptotic complexity.
         for (int i = 0; i < sCCs.length; i++) {
-            sCCs[i] = new LinkedList<GraphNode>();
+            sCCs[i] = new LinkedList<BasicGraphNode>();
         }
         indexOfLastSCC = -1; // No SCC's added yet, so max index is -1
         currentTime = 0;
@@ -92,7 +85,7 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
      * @return the array-of-linked-lists representation of the SCC's. Only valid
      *         after calling executeAlgorithm().
      */
-    public LinkedList<GraphNode>[] getSCCs() {
+    public LinkedList<BasicGraphNode>[] getSCCs() {
         return sCCs;
     }
 
@@ -103,13 +96,8 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
     private void getTranspose() { // Function to get transpose without using any
                                   // Java API data structures
         for (int i = 0; i < theGraph.length; i++) {
-            for (GraphNode adjNode : theGraph[i].getAdjList()) {
-                reversedGraph[adjNode.getIndex()].addEdge(reversedGraph[i]); // Add
-                                                                             // edge
-                                                                             // going
-                                                                             // in
-                                                                             // reverse
-                                                                             // direction
+            for (BasicGraphNode adjNode : theGraph[i].getAdjList()) {
+                reversedGraph[adjNode.getIndex()].addEdge(reversedGraph[i]); //Add edge in reverse direction
             }
         }
     }
@@ -122,16 +110,11 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
         int finishTime = 0; // Finish time starts at 0
         int minUnvisited = 0; // Lowest index of an unvisited node
 
-        while (finishTime < theGraph.length && minUnvisited < theGraph.length) { // While
-                                                                                 // we
-                                                                                 // haven't
-                                                                                 // discovered
-                                                                                 // all
-                                                                                 // nodes
+        //while we haven't discovered all nodes...
+        while (finishTime < theGraph.length && minUnvisited < theGraph.length) {
 
             // Get the first remaining unvisited node and visit it
-            while (minUnvisited < theGraph.length
-                    && theGraph[minUnvisited].getColor() != GraphNode.Color.UNVISITED)
+            while (minUnvisited < theGraph.length && theGraph[minUnvisited].getColor() != BasicGraphNode.Color.UNVISITED)
                 minUnvisited++;
 
             // If we haven't visited everything, then visit the next unvisited
@@ -149,8 +132,7 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
         while (maxFinishTime >= 0) { // While we haven't visited all nodes
 
             // Get the first remaining unvisited node and add it to the stack
-            while (maxFinishTime >= 0
-                    && reversedGraph[nodeFinishedAt[maxFinishTime]].getColor() != GraphNode.Color.UNVISITED)
+            while (maxFinishTime >= 0 && reversedGraph[nodeFinishedAt[maxFinishTime]].getColor() != BasicGraphNode.Color.UNVISITED)
                 maxFinishTime--;
 
             if (maxFinishTime >= 0) {
@@ -162,20 +144,17 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
     }
 
     /** Recursive visit function for the first DFS -- records finish times */
-    private void visitAndRecordFinish(GraphNode node) { // Discovers node, then
-                                                        // discovers all nodes
-                                                        // in Adj List, then
-                                                        // visits node
+    private void visitAndRecordFinish(BasicGraphNode node) { // Discovers node, then
 
-        node.setColor(GraphNode.Color.DISCOVERED);
+        node.setColor(BasicGraphNode.Color.DISCOVERED);
 
-        for (GraphNode n : node.getAdjList()) {
-            if (n.getColor() == GraphNode.Color.UNVISITED) {
+        for (BasicGraphNode n : node.getAdjList()) {
+            if (n.getColor() == BasicGraphNode.Color.UNVISITED) {
                 visitAndRecordFinish(n);
             }
         }
 
-        node.setColor(GraphNode.Color.VISITED);
+        node.setColor(BasicGraphNode.Color.VISITED);
         nodeFinishedAt[currentTime++] = node.getIndex(); // Record Finish time
     }
 
@@ -183,25 +162,19 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
      * Recursive visit function for the second DFS -- records strongly connected
      * components
      */
-    private void visitAndAddToComponent(GraphNode node) {
+    private void visitAndAddToComponent(BasicGraphNode node) {
 
-        node.setColor(GraphNode.Color.DISCOVERED);
+        node.setColor(BasicGraphNode.Color.DISCOVERED);
 
-        for (GraphNode n : node.getAdjList()) {
-            if (n.getColor() == GraphNode.Color.UNVISITED) {
+        for (BasicGraphNode n : node.getAdjList()) {
+            if (n.getColor() == BasicGraphNode.Color.UNVISITED) {
                 visitAndAddToComponent(n);
             }
         }
 
-        node.setColor(GraphNode.Color.VISITED);
-        sCCs[indexOfLastSCC].addToFront(new LinkedListNode<GraphNode>(node)); // Add
-                                                                              // node
-                                                                              // to
-                                                                              // Linked
-                                                                              // List
-                                                                              // for
-                                                                              // current
-                                                                              // SCC
+        node.setColor(BasicGraphNode.Color.VISITED);
+
+        sCCs[indexOfLastSCC].addToFront(new LinkedListNode<BasicGraphNode>(node));
     }
 
     /** Prints the strongly connected components to screen. */
@@ -209,7 +182,7 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
         for (int i = 0; i < sCCs.length; i++) {
             System.out.println("SCC # " + i + ":");
 
-            LinkedListNode<GraphNode> tmp = sCCs[i].getHead();
+            LinkedListNode<BasicGraphNode> tmp = sCCs[i].getHead();
 
             while (tmp != null) {
                 System.out.println("\t" + tmp.getData());
@@ -225,24 +198,17 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
     public String componentsToString() {
         // Begin code to convert array of LinkedList's into
         // ArrayList<TreeSet<GraphNode>> in order to sort
-        LinkedListNode<GraphNode> tmp;
-        GraphNodeComparator nodeCompare = new GraphNodeComparator();
-        ArrayList<TreeSet<GraphNode>> sCCsForPrinting;
-        sCCsForPrinting = new ArrayList<TreeSet<GraphNode>>(); // Need each SCC
-                                                               // sorted by
-                                                               // index of node,
-                                                               // To verify the
-                                                               // output from
-                                                               // both
-                                                               // algorithms is
-                                                               // the same
+        LinkedListNode<BasicGraphNode> tmp;
+        BasicGraphNodeComparator nodeCompare = new BasicGraphNodeComparator();
+        ArrayList<TreeSet<BasicGraphNode>> sCCsForPrinting;
+        sCCsForPrinting = new ArrayList<TreeSet<BasicGraphNode>>();
+
         for (int i = 0; i <= indexOfLastSCC; i++) {
-            sCCsForPrinting.add(new TreeSet<GraphNode>(nodeCompare));
+            sCCsForPrinting.add(new TreeSet<BasicGraphNode>(nodeCompare));
             tmp = sCCs[i].getHead();
 
             while (tmp != null) {
-                sCCsForPrinting.get(sCCsForPrinting.size() - 1).add(
-                        tmp.getData());
+                sCCsForPrinting.get(sCCsForPrinting.size() - 1).add(tmp.getData());
                 tmp = tmp.getNext();
             }
         }
@@ -253,7 +219,7 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
         for (int i = 0; i < sCCsForPrinting.size(); i++) {
             s += ("SCC # " + i + ":\n");
 
-            for (GraphNode n : sCCsForPrinting.get(i)) {
+            for (BasicGraphNode n : sCCsForPrinting.get(i)) {
                 s += ("\t" + n + "\n");
             }
         }
