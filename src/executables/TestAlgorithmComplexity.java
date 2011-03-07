@@ -70,6 +70,9 @@ public class TestAlgorithmComplexity {
 	}
 	
 	private static void testAllFiles() throws Exception {
+	    
+	    verifyFileWriter.write(isBasic ? "BASIC ALGORITHM VERIFICATION INFO" : "JAVA API ALGORITHM VERIFICATION INFO");
+        verifyFileWriter.newLine();
 		
 		outputFileWriter.write("DATA_FILE_NAME, NUM_EDGES, NUM_VERTICES, TIME(ns)");
 		outputFileWriter.newLine();
@@ -105,8 +108,7 @@ public class TestAlgorithmComplexity {
 				outputFileWriter.write(f.getName()+","+ currentGraph.getNumEdges() + "," + currentGraph.getNumVertices() + "," + elapsedTime);
 				outputFileWriter.newLine();
 				
-				verifyFileWriter.write(isBasic ? "BASIC ALGORITHM" : "JAVA API ALGORITHM");
-				verifyFileWriter.newLine();
+				
 				verifyFileWriter.write("**********Verification Info for File '" + f.getName() + "'**********");
 				if (currentGraph.getNumVertices() < numVerticesToVerify) {
 					

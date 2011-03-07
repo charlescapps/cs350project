@@ -69,7 +69,6 @@ public class UrlGraph extends Graph{
 						}
 					}
 				}
-				
 			}
 			catch (Exception e){
 				System.out.println("Failed to connect to URL " + node.getURL());
@@ -78,7 +77,11 @@ public class UrlGraph extends Graph{
 		}
 	}
 	
-	public void generateAdjacencyMatrixFromLinks() {
+	/**
+	 * Method to generate the actual graph from the links 
+	 * (actually adjacency lists, not matrix)
+	 */
+	public void generateGraphFromLinks() {
 		
 		UrlNode node = null; 
 		int j = -1; 

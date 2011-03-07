@@ -64,7 +64,7 @@ public class GenerateTestGraphs {
 				
 				System.out.println("\n************CRAWLING WEB STARTING AT HOST " + urlString + "*****************\n");
 				graph.getUrls(theURL, numNodes); 
-				graph.generateAdjacencyMatrixFromLinks();
+				graph.generateGraphFromLinks();
 				
 				nodesString = Integer.toString(numNodes);
 				while (nodesString.length() < 4)

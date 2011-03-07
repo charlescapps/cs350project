@@ -19,7 +19,7 @@ public class TestConnection {
 			UrlGraph graph = new UrlGraph();
 			graph.getUrls(new URL("http://www.msdn.com"), 30);
 			System.out.println(graph.getListOfUrls());
-			graph.generateAdjacencyMatrixFromLinks(); 
+			graph.generateGraphFromLinks(); 
 			graph.printAdjacencyMatrix();
 			
 			SCCAlgorithm algorithm = new SCCAlgorithm(graph); 

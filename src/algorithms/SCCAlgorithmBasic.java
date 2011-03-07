@@ -45,8 +45,6 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
 
         reversedGraph = new BasicGraphNode[theGraph.length]; //Init reversed graph
 
-       
-
         nodeFinishedAt = new int[theGraph.length];
 
         // There are at most |V| Strongly Connected Components, so
@@ -66,10 +64,8 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
 
     public void executeAlgorithm() {
         performDFS(); // Depth first search + record finish times
-        getTranspose(); // Clones the graph in O(|E|+|V|) time with direction of
-                        // edges reversed
-        performReversedDFS(); // Depth first search + record strongly connected
-                              // components
+        getTranspose(); // Find transpose of graph in O(|E|+|V|)
+        performReversedDFS(); // Depth first search + record SCC's
     }
 
     /**
@@ -105,16 +101,12 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
     private void performDFS() {
         int finishTime = 0; // Finish time starts at 0
         int minUnvisited = 0; // Lowest index of an unvisited node
-
         //while we haven't discovered all nodes...
         while (finishTime < theGraph.length && minUnvisited < theGraph.length) {
-
             // Get the first remaining unvisited node and visit it
             while (minUnvisited < theGraph.length && theGraph[minUnvisited].getColor() != BasicGraphNode.Color.UNVISITED)
                 minUnvisited++;
-
-            // If we haven't visited everything, then visit the next unvisited
-            // node
+            // If we haven't visited everything, then visit the next unvisited node
             if (minUnvisited < theGraph.length)
                 visitAndRecordFinish(theGraph[minUnvisited]);
         }
@@ -140,7 +132,7 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
     }
 
     /** Recursive visit function for the first DFS -- records finish times */
-    private void visitAndRecordFinish(BasicGraphNode node) { // Discovers node, then
+    private void visitAndRecordFinish(BasicGraphNode node) {
 
         node.setColor(BasicGraphNode.Color.DISCOVERED);
 
@@ -149,7 +141,6 @@ public class SCCAlgorithmBasic implements SCCAlgorithmInterface {
                 visitAndRecordFinish(n);
             }
         }
-
         node.setColor(BasicGraphNode.Color.VISITED);
         nodeFinishedAt[currentTime++] = node.getIndex(); // Record Finish time
     }

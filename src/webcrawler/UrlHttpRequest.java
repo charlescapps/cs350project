@@ -18,7 +18,7 @@ import java.io.*;
   
 public class UrlHttpRequest{
 
-	HttpURLConnection myConnection;
+	private HttpURLConnection myConnection;
 	private final String enc = "UTF-8";
 	private static final int timeout = 500; //500 ms default timeouts
 
