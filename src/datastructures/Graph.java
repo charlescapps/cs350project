@@ -91,6 +91,13 @@ public class Graph {
         return theClone;
     }
 
+    public void reInitGraph() { //Reset all nodes to UNVISITED
+        for (GraphNode gn: allNodes) {
+            gn.setColor(GraphNode.Color.UNVISITED);
+        }
+        
+    }
+    
     public BasicGraphNode[] toBasicGraph() {
         BasicGraphNode[] basicNodes = new BasicGraphNode[allNodes.size()];
 
